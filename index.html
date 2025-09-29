@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fogão Mesa Farta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #FFF8DC; /* Bege Milho */
+            color: #8B4513; /* Marrom Chocolate */
+        }
+        /* Cabeçalho */
+        header {
+            background-color: #D2691E; /* Laranja Tangerina */
+            color: #FFF8DC; /* Bege Milho */
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        header img {
+            width: 50px;
+            height: 50px;
+        }
+        header h1 {
+            font-size: 1.5rem;
+        }
+        /* Menu Lateral */
+        nav {
+            width: 200px;
+            background-color: #8B4513; /* Marrom Chocolate */
+            color: #FFF8DC; /* Bege Milho */
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: -200px;
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+        nav.active {
+            left: 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 1rem;
+        }
+        nav ul li {
+            margin: 1rem 0;
+        }
+        nav ul li a {
+            color: #FFF8DC; /* Bege Milho */
+            text-decoration: none;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        nav ul li a:hover {
+            color: #FFA500; /* Laranja Abóbora */
+        }
+        /* Botão do Menu Mobile */
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: #FFF8DC; /* Bege Milho */
+            cursor: pointer;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+        /* Conteúdo Principal */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        section {
+            display: none;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+        }
+        section.active {
+            display: block;
+        }
+        section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #FF6347; /* Vermelho Tomate */
+        }
+        section p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #8B4513; /* Marrom Chocolate */
+        }
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(300px, 1fr));
+            gap: 2rem;
+            justify-content: center;
+            justify-items: center;
+        }
+        .recipe-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+            border: 2px solid #8B4513; /* Marrom Chocolate */
+            max-width: 300px;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .recipe-card.tapioca img {
+            height: 150px; /* Imagem da tapioca menor */
+        }
+        .recipe-card h3 {
+            font-size: 1.4rem;
+            color: #FF6347; /* Vermelho Tomate */
+            padding: 1rem;
+        }
+        .recipe-card p {
+            padding: 0 1rem;
+            line-height: 1.6;
+            color: #8B4513; /* Marrom Chocolate */
+        }
+        .recipe-card .rating {
+            padding: 1rem;
+            color: #8B4513; /* Marrom Chocolate */
+            font-size: 0.9rem;
+        }
+        .recipe-card .rating span {
+            color: #FFA500; /* Laranja Abóbora */
+            font-weight: bold;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            justify-content: center;
+            justify-items: center;
+            margin-top: 2rem;
+        }
+        .team-member {
+            background-color: #fff;
+            border: 2px solid #8B4513; /* Marrom Chocolate */
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            max-width: 250px;
+        }
+        .team-member img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+        }
+        .team-member h3 {
+            font-size: 1.2rem;
+            color: #FF6347; /* Vermelho Tomate */
+            margin-bottom: 0.5rem;
+        }
+        .team-member p {
+            font-size: 0.9rem;
+            color: #8B4513; /* Marrom Chocolate */
+        }
+        /* Estilo do Formulário de Contato */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        .contact-form label {
+            font-size: 1rem;
+            color: #8B4513; /* Marrom Chocolate */
+        }
+        .contact-form input,
+        .contact-form textarea {
+            padding: 0.5rem;
+            border: 2px solid #8B4513; /* Marrom Chocolate */
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #8B4513; /* Marrom Chocolate */
+            background-color: #FFF8DC; /* Bege Milho */
+        }
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .contact-form button {
+            padding: 0.75rem;
+            background-color: #D2691E; /* Laranja Tangerina */
+            color: #FFF8DC; /* Bege Milho */
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .contact-form button:hover {
+            background-color: #FFA500; /* Laranja Abóbora */
+        }
+        .contact-info {
+            margin-top: 2rem;
+        }
+        .contact-info a {
+            color: #FF6347; /* Vermelho Tomate */
+            text-decoration: none;
+        }
+        .contact-info a:hover {
+            color: #FFA500; /* Laranja Abóbora */
+        }
+        /* Rodapé */
+        footer {
+            background-color: #8B4513; /* Marrom Chocolate */
+            color: #FFF8DC; /* Bege Milho */
+            text-align: center;
+            padding: 1rem;
+        }
+        footer p {
+            margin: 0.5rem 0;
+        }
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header {
+                justify-content: space-between;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            nav {
+                width: 100%;
+                height: 100vh;
+            }
+            main {
+                margin: 1rem;
+            }
+            header h1 {
+                font-size: 1.2rem;
+            }
+            .recipe-grid {
+                grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
+            }
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            .contact-form {
+                max-width: 100%;
+            }
+        }
+        @media (min-width: 769px) {
+            nav {
+                left: 0;
+                width: 200px;
+            }
+            main {
+                margin-left: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header>
+        <button class="menu-toggle">☰</button>
+        <img src="https://lh3.googleusercontent.com/chat_attachment/AP1Ws4tPx_cAOUYizWPSimm2RJqNT-RfCXxpHyPmsJ3cC2jSMljhb-YMB0torKsWY_4TyHNiw16jGbhr3aOf7zng5wedXUJF1GnbupjVnpc5tAwpmbSMZaevYCCM0Mm7_JmRgkMLccAUANTaPlh-ruuMoIkryTxeibVJjtY3YQNHucuUsPQOTZmUZGzUGJ7ahYq5H6gQwZDJCXNTqJStJOfkA1ObwJEmOCkKGFiDeR6Os7y-tAzdh7-EeEKldrT87fE16rSIQbUAdKBbyFmsOg8Y32S_tQUNt3m7ozKGngecNtDjaHfF5Fd8uYECq2MrentLAYk=w1920-h945-rw" alt="Logotipo Fogão Mesa Farta">
+        <h1>Fogão Mesa Farta</h1>
+    </header>
+    <!-- Menu Lateral -->
+    <nav id="sidebar">
+        <ul>
+            <li><a data-section="home">Home</a></li>
+            <li><a data-section="sobre">Sobre</a></li>
+            <li><a data-section="contato">Contato</a></li>
+        </ul>
+    </nav>
+    <!-- Conteúdo Principal -->
+    <main>
+        <!-- Seção Home -->
+        <section id="home" class="active">
+            <h2>Receitas Famosas Brasileiras</h2>
+            <div class="recipe-grid">
+                <!-- Receita 1 -->
+                <div class="recipe-card">
+                    <img src="feijoada.jpg" alt="Feijoada">
+                    <h3>Feijoada</h3>
+                    <p>Um prato clássico brasileiro, perfeito para reunir amigos e família. Saboroso e cheio de história!</p>
+                    <div class="rating">Avaliação: <span>4.8/5</span> (120 avaliações)</div>
+                </div>
+                <!-- Receita 2 -->
+                <div class="recipe-card">
+                    <img src="moqueca.jpg" alt="Moqueca">
+                    <h3>Moqueca de Peixe</h3>
+                    <p>Delicada e aromática, essa moqueca baiana é um presente do litoral brasileiro.</p>
+                    <div class="rating">Avaliação: <span>4.7/5</span> (95 avaliações)</div>
+                </div>
+                <!-- Receita 3 -->
+                <div class="recipe-card">
+                    <img src="pao-de-queijo.jpg" alt="Pão de Queijo">
+                    <h3>Pão de Queijo</h3>
+                    <p>Crocante por fora e macio por dentro, o pão de queijo é um ícone mineiro irresistível.</p>
+                    <div class="rating">Avaliação: <span>4.9/5</span> (200 avaliações)</div>
+                </div>
+                <!-- Receita 4 -->
+                <div class="recipe-card">
+                    <img src="brigadeiro.jpg" alt="Brigadeiro">
+                    <h3>Brigadeiro</h3>
+                    <p>Doce brasileiro que conquista corações com sua simplicidade e sabor de chocolate.</p>
+                    <div class="rating">Avaliação: <span>4.6/5</span> (150 avaliações)</div>
+                </div>
+                <!-- Receita 5 -->
+                <div class="recipe-card">
+                    <img src="acaraje.jpg" alt="Acarajé">
+                    <h3>Acarajé</h3>
+                    <p>Tradição baiana, esse bolinho frito de feijão-fradinho é servido com vatapá e camarão.</p>
+                    <div class="rating">Avaliação: <span>4.5/5</span> (80 avaliações)</div>
+                </div>
+                <!-- Receita 6 -->
+                <div class="recipe-card tapioca">
+                    <img src="tapioca.jpg" alt="Tapioca">
+                    <h3>Tapioca</h3>
+                    <p>Versátil e leve, a tapioca nordestina pode ser recheada com sabores doces ou salgados.</p>
+                    <div class="rating">Avaliação: <span>4.7/5</span> (110 avaliações)</div>
+                </div>
+            </div>
+        </section>
+        <!-- Seção Sobre -->
+        <section id="sobre">
+            <h2>Sobre o Fogão Mesa Farta</h2>
+            <p>O <strong>Fogão Mesa Farta</strong> nasceu em 2020 com a missão de celebrar a riqueza da culinária brasileira, trazendo receitas tradicionais e contemporâneas para todos os lares. Nosso objetivo é unir pessoas através do amor pela comida, compartilhando sabores autênticos, histórias regionais e dicas práticas para transformar qualquer refeição em um momento especial.</p>
+            <p>Inspirados pela diversidade cultural do Brasil, nosso site reúne pratos de todas as regiões, desde a feijoada carioca até a tapioca nordestina, com um toque de criatividade e paixão. Queremos que cada visitante sinta o calor do fogão e a alegria de uma mesa farta!</p>
+           
+            <h2>Nossa Equipe</h2>
+            <div class="team-grid">
+                <!-- Membro 1 -->
+                <div class="team-member">
+                    <img src="https://lh3.googleusercontent.com/chat_attachment/AP1Ws4vGVMY_Ic3Kg_MfwTlCkXA0onZgsOC3Aj-JtQAdae5q164wZmpvgbU8N3Zx_Hudy0NcgHRRZ9giGZpe8nr7d2mRXCvIChXbQwArWEgKsyd6IacfsakJtSx1Z2p-iIT9160HYefNLzhxaJKc04LGLuYvFYX0c_THs9n2qsYgAUp0S2frdgcUIgLEdbArh22GK7zKqjmJNpOOgwFtSMGx9uW7EJRfJGuoJBoXnpwa5lLYM9h8ErShMceyIBKxrLcsqro_nVAwUp7yJzZo-HWOnDHkVjCPrrpJXlQokVKCD9Cff6Eq9oLTlH_EwuAA_k2lTSQ=w512" alt="Ana Silva">
+                    <h3>Ana Silva</h3>
+                    <p>Fundadora e Chef Principal</p>
+                    <p>Ana é apaixonada pela culinária brasileira e tem mais de 15 anos de experiência em cozinhas regionais. Ela lidera a criação de receitas com um toque caseiro e autêntico.</p>
+                </div>
+                <!-- Membro 2 -->
+                <div class="team-member">
+                    <img src="https://lh3.googleusercontent.com/chat_attachment/AP1Ws4tBiLkEBe6UDiTYsU8FHNDa10AQKO6m6oSWSTElmBqpXxIRfs_RfwzZMNsD8Hq1T5-eeVx68CtESTeLfiUvywFyO5PgS-OTdDMzGjJyWvkKxjdKRwTgE5SG0NKcZoq14N9rN8an2PYbqSL5UguExJwprmIUC7jUmRtDRZeboJ18ite4jR7d0zuGXu0gkiOuJWYrz-TqzFFTe1yvuepEyof8EUJj1bznqME7K_q8FXqmxGvRjqEZWVI9ZYaB1MCcFBn2HhSSY-9_ah8Zdo8QCl-Q1IidAabEyNJYW1Liqzcy0Chqj4LHzl6gkighA6zmob4=w512" alt="Carlos Mendes">
+                    <h3>Carlos Mendes</h3>
+                    <p>Editor de Conteúdo</p>
+                    <p>Carlos é responsável por contar as histórias por trás de cada prato, conectando culturas e sabores através de textos envolventes.</p>
+                </div>
+                <!-- Membro 3 -->
+                <div class="team-member">
+                    <img src="https://lh3.googleusercontent.com/chat_attachment/AP1Ws4v_BRgEtYfn1Qk3ded4PGMU3XWg6V4khrMBja21Srgyh8ensZRN7eZCCfAlldiI4v2IRA_jNw7f3jXURoxbJSSsPOaymv7QGzEBhlajCK-paM0j-Y2aC5_OAOdwNhje6XXCgW9hOjrzj6mfOdpJNZqs4lX9E1JDT1wQ5ZMZmvWXM-uirFa_bu03CXik_SQZlA2k_KConMczvAZ8YoELgHK6BFtg-6-ePQHXJkwuQmtlD7Nq_-juy9U_IVG_EjfGg09gX0bEKHBF-RBG23SdxobFWaWawnbdpX1BQjmZ7rrNiizBdxB1FZuZjk8bCEVTVEA=w512" alt="Mariana Costa">
+                    <h3>Mariana Costa</h3>
+                    <p>Fotógrafa e Designer</p>
+                    <p>Mariana captura a essência de cada receita com fotos vibrantes e cria o visual acolhedor do nosso site.</p>
+                </div>
+            </div>
+        </section>
+        <!-- Seção Contato -->
+        <section id="contato">
+            <h2>Entre em Contato</h2>
+            <p>Estamos aqui para ouvir suas ideias, dúvidas ou sugestões! Seja para compartilhar uma receita de família, perguntar sobre um prato ou apenas conversar sobre a paixão pela culinária brasileira, entre em contato conosco.</p>
+           
+            <div class="contact-form">
+                <h3>Envie sua Mensagem</h3>
+                <label for="name">Nome</label>
+                <input type="text" id="name" placeholder="Seu nome" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Seu email" required>
+                <label for="message">Mensagem</label>
+                <textarea id="message" placeholder="Escreva sua mensagem aqui" required></textarea>
+                <button type="button">Enviar</button>
+            </div>
+            <div class="contact-info">
+                <h3>Informações de Contato</h3>
+                <p>Email: <a href="mailto:contato@fogaomesafarta.com">contato@fogaomesafarta.com</a></p>
+                <p>Telefone: (11) 1234-5678</p>
+                <p>Endereço: Rua das Panelas, 123, Bairro Saboroso, São Paulo, SP, Brasil</p>
+                <p>Horário de Atendimento: Segunda a Sexta, das 9h às 17h</p>
+                <p>Siga-nos nas redes sociais:</p>
+                <p>
+                    <a href="#" target="_blank">Instagram</a> |
+                    <a href="#" target="_blank">Facebook</a> |
+                    <a href="#" target="_blank">Twitter</a>
+                </p>
+            </div>
+        </section>
+    </main>
+    <!-- Rodapé -->
+    <footer>
+        <p>Contato: contato@fogaomesafarta.com</p>
+        <p>&copy; 2025 Fogão Mesa Farta. Todos os direitos reservados.</p>
+    </footer>
+    <!-- Script para navegação e menu mobile -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const links = document.querySelectorAll('nav a');
+            const sections = document.querySelectorAll('main section');
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('#sidebar');
+            // Navegação entre seções
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    const sectionId = link.getAttribute('data-section');
+                    if (sectionId) {
+                        const targetSection = document.getElementById(sectionId);
+                        if (targetSection) {
+                            sections.forEach(section => {
+                                section.classList.remove('active');
+                            });
+                            targetSection.classList.add('active');
+                            // Fecha o menu mobile após clicar
+                            if (sidebar) {
+                                sidebar.classList.remove('active');
+                            }
+                        } else {
+                            console.error(`Seção com ID "${sectionId}" não encontrada.`);
+                        }
+                    } else {
+                        console.error('Atributo data-section não definido no link.');
+                    }
+                });
+            });
+            // Menu mobile
+            if (menuToggle && sidebar) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('active');
+                });
+            } else {
+                console.error('Elemento .menu-toggle ou #sidebar não encontrado.');
+            }
+        });
+    </script>
+</body>
+</html>
